@@ -93,24 +93,66 @@ static void showShelf(void) {
     }
 }
 
-static void     addToBasket(void){
-
-
+static void addToBasket(void) {
+    int id, qty;
+    printf("Which candy (0-5)? ");
+    if (scanf("%d", &id) != 1 || id < 0 || id >= CANDY_KINDS) {
+        printf("Invalid candy!\n");
+        return;
+    }
+    printf("How many? ");
+    if (scanf("%d", &qty) != 1 || qty <= 0) {
+        printf("Invalid number!\n");
+        return;
+    }
+    if (shelf[id].stock < qty) {
+        printf("Not enough stock!\n");
+        return;
+    }
+    for (uint8_t i = 0; i < basketLines; i++) {
+        if (basket[i].candyId == id) {
+            basket[i].qty += qty;
+            return;
+        }
+    }
+    if (basketLines >= BASKET_MAX) {
+        printf("Basket full!\n");
+        return;
+    }
+    basket[basketLines].candyId = (uint8_t)id;
+    basket[basketLines].qty = (uint8_t)qty;
+    basketLines++;
 }
 
-static void     removeFromBasket(void){
-
-
+static void removeFromBasket(void) {
+    int line;
+    printf("Which basket line (0-%u)? ", basketLines-1);
+    if (scanf("%d", &line) != 1 || line < 0 || line >= basketLines) {
+        printf("Invalid line!\n");
+        return;
+    }
+    for (uint8_t i = line; i < basketLines-1; i++) {
+        basket[i] = basket[i+1];
+    }
+    basketLines--;
 }
 
-static uint32_t basketTotal(void){
-
-
+static uint32_t basketTotal(void) {
+    uint32_t total = 0;
+    for (uint8_t i = 0; i < basketLines; i++) {
+        total += basket[i].qty * shelf[basket[i].candyId].price;
+    }
+    return total;
 }
 
-static void     showBasket(void){
-
-
+static void showBasket(void) {
+    printf("\nBasket:\n");
+    for (uint8_t i = 0; i < basketLines; i++) {
+        Candy_t *c = &shelf[basket[i].candyId];
+        uint32_t lineCost = basket[i].qty * c->price;
+        printf("%s x%u @%u = %u\n", c->name, basket[i].qty, c->price, lineCost);
+    }
+    printf("Total: %u\n", basketTotal());
 }
 
 static void     checkout(void){
