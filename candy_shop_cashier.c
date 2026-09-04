@@ -66,14 +66,31 @@ int main(void) {
     return 0;
 }
 
-static void     openShop(void){
 
-
+static void openShop(void) {
+    const char *names[CANDY_KINDS] = {"Lollipop","Chocolate","Gum","Caramel","Marshmallow","Cookie"};
+    const uint16_t prices[CANDY_KINDS] = {50, 200, 25, 100, 150, 75};
+    const uint16_t stocks[CANDY_KINDS] = {20, 10, 30, 15, 25, 12};
+    for (uint8_t i = 0; i < CANDY_KINDS; i++) {
+        strncpy(shelf[i].name, names[i], NAME_LEN);
+        shelf[i].price = prices[i];
+        shelf[i].stock = stocks[i];
+        shelf[i].sold = 0;
+    }
+    basketLines = 0;
+    cashDrawer = 0;
 }
 
-static void     showShelf(void){
-
-
+static void showShelf(void) {
+    printf("\nShelf:\n");
+    for (uint8_t i = 0; i < CANDY_KINDS; i++) {
+        printf("%u: %-12s %3u piastres | %s\n",
+               i, shelf[i].name, shelf[i].price,
+               (shelf[i].stock == 0) ? "SOLD OUT" : "");
+        if (shelf[i].stock > 0) {
+            printf("   Stock: %u\n", shelf[i].stock);
+        }
+    }
 }
 
 static void     addToBasket(void){
