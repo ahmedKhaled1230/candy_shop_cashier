@@ -155,14 +155,44 @@ static void showBasket(void) {
     printf("Total: %u\n", basketTotal());
 }
 
-static void     checkout(void){
-
-
+static void checkout(void) {
+    uint32_t total = basketTotal();
+    printf("Total: %u\n", total);
+    int money;
+    printf("Money given: ");
+    if (scanf("%d", &money) != 1 || money < 0) {
+        printf("Invalid input!\n");
+        return;
+    }
+    if ((uint32_t)money < total) {
+        printf("Not enough money!\n");
+        return;
+    }
+    for (uint8_t i = 0; i < basketLines; i++) {
+        shelf[basket[i].candyId].stock -= basket[i].qty;
+        shelf[basket[i].candyId].sold += basket[i].qty;
+    }
+    cashDrawer += total;
+    giveChange((uint32_t)money - total);
+    basketLines = 0;
 }
 
-static void     giveChange(uint32_t change){
-
-
+static void giveChange(uint32_t change) {
+    if (change == 0) {
+        printf("No change, thank you!\n");
+        return;
+    }
+    uint16_t coins[5] = {500,200,100,50,25};
+    for (uint8_t i = 0; i < 5; i++) {
+        uint32_t count = change / coins[i];
+        if (count > 0) {
+            printf("%u x %u\n", coins[i], count);
+            change -= count * coins[i];
+        }
+    }
+    if (change > 0) {
+        printf("Cannot return exact change, leftover: %u\n", change);
+    }
 }
 
 static uint8_t  bestSeller(void){
