@@ -96,12 +96,12 @@ static void showShelf(void) {
 static void addToBasket(void) {
     int id, qty;
     printf("Which candy (0-5)? ");
-    if (scanf("%d", &id) != 1 || id < 0 || id >= CANDY_KINDS) {
+    if (scanf("%d", &id) != 1 || id < 0 || id >= (int)CANDY_KINDS) {
         printf("Invalid candy!\n");
         return;
     }
     printf("How many? ");
-    if (scanf("%d", &qty) != 1 || qty <= 0) {
+    if (scanf("%d", &qty) != 1 || qty <= 0 || qty > UINT8_MAX) {
         printf("Invalid number!\n");
         return;
     }
@@ -126,7 +126,11 @@ static void addToBasket(void) {
 
 static void removeFromBasket(void) {
     int line;
-    printf("Which basket line (0-%u)? ", basketLines-1);
+    if (basketLines == 0) {
+        printf("Basket is empty!\n");
+        return;
+    }
+    printf("Which basket line (0-%u)? ", (unsigned)(basketLines - 1U));
     if (scanf("%d", &line) != 1 || line < 0 || line >= basketLines) {
         printf("Invalid line!\n");
         return;
