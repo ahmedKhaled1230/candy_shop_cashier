@@ -195,12 +195,30 @@ static void giveChange(uint32_t change) {
     }
 }
 
-static uint8_t  bestSeller(void){
-
-
+static uint8_t bestSeller(void) {
+    uint8_t pos = 0;
+    for (uint8_t i = 1; i < CANDY_KINDS; i++) {
+        if (shelf[i].sold > shelf[pos].sold) {
+            pos = i;
+        }
+    }
+    return pos;
 }
 
-static void     dayReport(void){
-
-
+static void dayReport(void) {
+    printf("\nDay Report:\n");
+    printf("Cash drawer: %u\n", cashDrawer);
+    uint32_t totalSold = 0;
+    for (uint8_t i = 0; i < CANDY_KINDS; i++) {
+        totalSold += shelf[i].sold;
+    }
+    printf("Candies sold: %u\n", totalSold);
+    uint8_t best = bestSeller();
+    printf("Best seller: %s\n", shelf[best].name);
+    printf("Sold out:\n");
+    for (uint8_t i = 0; i < CANDY_KINDS; i++) {
+        if (shelf[i].stock == 0) {
+            printf(" - %s\n", shelf[i].name);
+        }
+    }
 }
